@@ -1,5 +1,5 @@
+# frozen_string_literal: true
 
-# @param content [String]
 def normalize_content(content)
-  content.sub /^\!\w+\W/, ''
+  content.sub(/^!\w+\W/, '')
 end

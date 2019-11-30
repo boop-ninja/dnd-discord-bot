@@ -1,16 +1,29 @@
 # frozen_string_literal: true
 
 require 'discordrb'
-require_relative 'lib/utils/environment'
+require_relative 'lib/config/environment'
 require_relative 'lib/utils/command'
-require_relative 'lib/commands/snuggle'
+
+require_relative 'lib/commands/ping'
 require_relative 'lib/commands/roll'
-require_relative 'lib/utils/format_user_id'
-require_relative 'lib/utils/parse_user_ids'
+require_relative 'lib/commands/snuggle'
 
-bot = Discordrb::Bot.new token: DISCORD_BOT_TOKEN
+environment = R4RBot::Environment.new
+client = Discordrb::Bot.new token: environment.discord_bot_token
 
-command(bot, /!roll/i) { |event| roll event }
-command(bot, /!snuggle/i) { |event, user_ids| snuggle event, user_ids }
 
-bot.run
+module R4RBot
+  VERSION = '0.0.1'
+end
+
+
+R4RBot::Commands::Command.subclasses.each do |klass|
+  klass.register environment: environment, client: client, bot: self
+end
+
+client.ready do |event|
+  environment.logger.info 'Discord client ready!'
+  client.game = "R4RBot #{R4RBot::VERSION}"
+end
+
+client.run
