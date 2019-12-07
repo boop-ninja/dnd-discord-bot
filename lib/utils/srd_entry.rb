@@ -63,11 +63,9 @@ module R4RBot
             }
           end
         end
-        return arr unless arr.respond_to?(:flatten!)
-        return arr unless arr.respond_to?(:filter)
 
         arr.flatten!
-        arr.filter do |last_check|
+        arr.select do |last_check|
           last_check[:name].length.positive? &&
             last_check[:value].length.positive? &&
             last_check != '{}' &&

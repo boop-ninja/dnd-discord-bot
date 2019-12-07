@@ -47,7 +47,8 @@ module R4RBot
       def data_files
         json_file_paths = File.expand_path(File.join(__FILE__ , '../../..', 'data', 'WOTC_5e_SRD_v5.1'))
         json_files = Dir.entries(json_file_paths)
-        json_files.filter { |p| !%w[. ..].include? p }.map { |e| File.expand_path(File.join(json_file_paths, e)) }
+        json_files.reject! { |p| %w[. ..].include? p }
+        json_files.map { |e| File.expand_path(File.join(json_file_paths, e)) }
       end
 
       def load_file(file_name)
