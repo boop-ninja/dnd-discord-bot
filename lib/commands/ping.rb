@@ -9,7 +9,7 @@ module R4RBot
         'ping'
       end
       # @param [Discordrb::Events::MessageEventHandler] event
-      def fulfill(event, user_ids)
+      def fulfill(event)
         logger.info "Received ping request from #{event.user.nick || event.user.username}"
         m = event.respond 'pong!'
         m.edit format('pong! - event delay %0.3f seconds.', Time.now - event.timestamp)

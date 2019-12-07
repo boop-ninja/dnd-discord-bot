@@ -12,8 +12,8 @@ module R4RBot
       end
 
       # @param [Discordrb::Events::MessageEventHandler] event
-      # @param [Object] user_ids
-      def fulfill(event, user_ids)
+      def fulfill(event)
+        user_ids = parse_user_ids(event.message.content)
         log_msg = format(
           'Received snuggle request from %<username>s',
           username: event.user.nick || event.user.username

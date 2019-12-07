@@ -1,7 +1,9 @@
 source 'https://rubygems.org'
 
+gem 'rack'
 gem 'discordrb'
 gem 'dotenv'
+gem 'foreman'
 
 group :development, :test do
   gem 'rerun'

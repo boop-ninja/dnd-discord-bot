@@ -7,6 +7,7 @@ require_relative 'lib/utils/command'
 require_relative 'lib/commands/ping'
 require_relative 'lib/commands/roll'
 require_relative 'lib/commands/snuggle'
+require_relative 'lib/commands/lookup'
 
 environment = R4RBot::Environment.new
 client = Discordrb::Bot.new token: environment.discord_bot_token
@@ -26,4 +27,10 @@ client.ready do |event|
   client.game = "R4RBot #{R4RBot::VERSION}"
 end
 
+gui = proc do |env|
+  ['200', { 'Content-Type' => 'text/html' }, ['A barebones rack app.']]
+end
+
 client.run
+
+

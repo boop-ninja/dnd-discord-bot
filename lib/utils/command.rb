@@ -2,6 +2,7 @@
 
 require 'logger'
 require_relative 'parse_user_ids'
+require_relative '../errors/invalid_message_args'
 
 module R4RBot
   module Commands
@@ -22,6 +23,25 @@ module R4RBot
         @logger = @environment.logger
       end
 
+      def respond_with_embedded_error(event, message)
+        event.channel.send_embed('') do |embed|
+          embed.title = 'Woah! Looks like we hit an issue!'
+          embed.colour = 0xff0000
+          name = format('%<value>s', value: 'Error:')
+          value = format('%<value>s', value: message)
+          embed.add_field name: name, value: value
+        end
+      end
+
+      def handle_event(event)
+        fulfill(event)
+      rescue R4RBot::Errors::InvalidMessageArguments => e
+        logger.error e.message
+        respond_with_embedded_error event, e.message
+      rescue StandardError => e
+        logger.error format("%<message>s \n %<backtrace>s", message: e.message, backtrace: e.backtrace.join("\n"))
+        respond_with_embedded_error event, e.message
+      end
 
       class << self
         def subclasses
@@ -44,25 +64,21 @@ module R4RBot
         def register(environment:, client:, bot:)
           registrations.each_pair do |key, value|
             client.message(key => value) do |event|
-              user_ids = parse_user_ids(event.content)
               new(
                 environment: environment,
                 client: client,
                 event: event,
                 bot: bot
-              )
-                .fulfill(event, user_ids)
+              ).handle_event event
             end
 
             client.message_edit(key => value) do |event|
-              user_ids = parse_user_ids(event.content)
               new(
                 environment: environment,
                 client: client,
                 event: event,
                 bot: bot
-              )
-                .fulfill(event, user_ids)
+              ).handle_event event
             end
           end
         end

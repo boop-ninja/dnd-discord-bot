@@ -15,6 +15,7 @@ GEM
     dotenv (2.7.5)
     event_emitter (0.2.6)
     ffi (1.11.3-x64-mingw32)
+    foreman (0.86.0)
     http-accept (1.7.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
@@ -27,6 +28,7 @@ GEM
     netrc (0.11.0)
     opus-ruby (1.0.1)
       ffi
+    rack (2.0.7)
     rb-fsevent (0.10.3)
     rb-inotify (0.10.0)
       ffi (~> 1.0)
@@ -55,6 +57,8 @@ PLATFORMS
 DEPENDENCIES
   discordrb
   dotenv
+  foreman
+  rack
   rerun
   wdm (>= 0.1.0)
 

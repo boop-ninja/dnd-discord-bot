@@ -26,8 +26,7 @@ module R4RBot
       end
 
       # @param [Discordrb::Events::MessageEventHandler] event
-      # @param [Object] user_ids
-      def fulfill(event, user_ids)
+      def fulfill(event)
         log_msg = format(
           'Received roll request from %<username>s',
           username: event.user.nick || event.user.username
