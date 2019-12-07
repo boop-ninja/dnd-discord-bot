@@ -1,2 +1,1 @@
-bot: bundle exec ruby ./app.rb
-web: bundle exec rackup
+worker: bundle exec ruby ./app.rb

@@ -66,13 +66,17 @@ module R4RBot
         data_file = R4RBot::Utils::SRD.new logger: logger, name: selected_category
         item = data_file.find_by_name(item_name.join(' ').downcase)
 
+        unless item
+          return event.respond "I didnt find anything while searching #{item_name.join(' ')} in #{selected_category}"
+        end
+
         event.channel.send_embed('') do |embed|
           embed.title = item['name']
           embed.description = item['desc'] || item['name']
           embed.colour = random_hex_color
           item.to_discord_fields(%w[id name desc]).each do |field|
             next unless field
-            puts field
+
             embed.add_field(
               name: field[:name],
               value: field[:value],
