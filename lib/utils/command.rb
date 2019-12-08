@@ -23,6 +23,8 @@ module R4RBot
         @logger = @environment.logger
       end
 
+
+
       def respond_with_embedded_error(event, message)
         event.channel.send_embed('') do |embed|
           embed.title = 'Woah! Looks like we hit an issue!'
@@ -34,6 +36,7 @@ module R4RBot
       end
 
       def handle_event(event)
+        # /^!\w+\shelp$/i.match?(event.message.content)
         fulfill(event)
       rescue R4RBot::Errors::InvalidMessageArguments => e
         logger.error e.message

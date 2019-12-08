@@ -56,11 +56,22 @@ module R4RBot
         @content = JSON.parse(File.read(data_file), object_class: R4RBot::Utils::SRDEntry)
       end
 
+      def all
+        @content
+      end
+
+      def names
+        @names ||= @content.map { |e| e[:name] }.select{ |e| e.is_a?(String) }
+      end
+
+      # @return [R4RBot::Utils::SRDEntry]
       def find_by_name(name)
         @content.find do |e|
-          Regexp.new(name, Regexp::IGNORECASE).match?(e.name)
+          Regexp.new(Regexp.escape(name), Regexp::IGNORECASE).match?(e.name)
         end
       end
+
+      private :file_names, :data_files, :load_file
     end
   end
 end
