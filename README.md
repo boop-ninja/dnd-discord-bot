@@ -2,6 +2,8 @@
 
 > Logo is work in progress...
 
+[Click Here! To add me to your server!](https://discordapp.com/oauth2/authorize?client_id=191805365212413953&scope=bot&permissions=68608)
+
 ## Commands
 `(optional) [required]`
 
