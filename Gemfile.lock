@@ -14,6 +14,7 @@ GEM
       unf (>= 0.0.5, < 1.0.0)
     dotenv (2.7.5)
     event_emitter (0.2.6)
+    ffi (1.11.3)
     ffi (1.11.3-x64-mingw32)
     foreman (0.86.0)
     http-accept (1.7.0)
@@ -29,7 +30,7 @@ GEM
     netrc (0.11.0)
     opus-ruby (1.0.1)
       ffi
-    rack (2.0.7)
+    rack (2.0.8)
     rake (13.0.0)
     rb-fsevent (0.10.3)
     rb-inotify (0.10.0)
@@ -38,6 +39,11 @@ GEM
       ffi
     rerun (0.13.0)
       listen (~> 3.0)
+    rest-client (2.1.0)
+      http-accept (>= 1.7.0, < 2.0)
+      http-cookie (>= 1.0.2, < 2.0)
+      mime-types (>= 1.16, < 4.0)
+      netrc (~> 0.8)
     rest-client (2.1.0-x64-mingw32)
       ffi (~> 1.9)
       http-accept (>= 1.7.0, < 2.0)
@@ -47,13 +53,13 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.6)
-    wdm (0.1.1)
     websocket (1.2.8)
     websocket-client-simple (0.3.0)
       event_emitter
       websocket
 
 PLATFORMS
+  ruby
   x64-mingw32
 
 DEPENDENCIES
@@ -64,7 +70,6 @@ DEPENDENCIES
   rack
   rake
   rerun
-  wdm (>= 0.1.0)
 
 BUNDLED WITH
    2.0.2
