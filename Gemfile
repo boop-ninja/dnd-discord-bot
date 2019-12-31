@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 
 gem 'discordrb'
@@ -5,6 +7,7 @@ gem 'dotenv'
 gem 'foreman'
 gem 'minitest'
 gem 'rack'
+
 
 group :development, :test do
   gem 'rake'
