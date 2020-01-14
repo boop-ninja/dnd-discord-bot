@@ -56,11 +56,11 @@ resource "aws_dynamodb_table" "prod_dynamodb_table" {
 
   attribute {
     name = var.aws_dynamodb_hash_key
-    type = var.aws_dynamodb_range_key
+    type = "S"
   }
 
   attribute {
-    name = "tags"
+    name = var.aws_dynamodb_range_key
     type = "S"
   }
 
