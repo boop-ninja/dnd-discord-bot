@@ -26,7 +26,7 @@ variable "discord_bot_token" {
 
 variable "aws_dynamodb_table" {
   type = string
-  default = 'dnd_discord_bot'
+  default = "dnd_discord_bot"
 }
 
 variable "aws_dynamodb_hash_key" {
