@@ -23,11 +23,13 @@ OptionParser.new do |opts|
 end.parse!
 
 
-environment = R4RBot::Environment.new
+environment = R4RBot::Environment
 client = Discordrb::Bot.new token: environment.discord_bot_token
+client_id = client.bot_application.id
+invite_url = "https://discordapp.com/oauth2/authorize?client_id=#{client_id}&scope=bot&permissions=68608"
 
 module R4RBot
-  VERSION = ENV.fetch('HEROKU_RELEASE_VERSION', '1.0.0')
+  VERSION = ENV.fetch('HEROKU_RELEASE_VERSION', '1.1.0')
 end
 
 
@@ -35,8 +37,16 @@ R4RBot::Commands::Command.subclasses.each do |klass|
   klass.register environment: environment, client: client, bot: self
 end
 
+client.server_create do |event|
+  environment.logger.info "Hey it looks like I just joined a new server! I am now part of #{event.server.name}."
+  environment.tracker.event action: 'server_create', region: event.server.region_id
+  environment.logger.info "We are now in #{client.servers.count} servers!"
+end
+
 client.ready do |event|
   environment.logger.info 'Discord client ready!'
+  environment.logger.info "I am now part of #{client.servers.count} servers!"
+  environment.logger.info "Here is my invite URL: #{invite_url}"
   client.game = "R4RBot #{R4RBot::VERSION}"
 end
 

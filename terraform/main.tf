@@ -1,20 +1,38 @@
+provider "aws" {
+  region  = "us-west-2"
+}
+
 provider "heroku" {
   email   = var.heroku_email
   api_key = var.heroku_api_key
 }
 
-provider "aws" {
-  version = "~> 3.0"
-  region  = "us-west-2"
+data "aws_iam_policy_document" "example" {
+  statement {
+    actions = [
+      "dynamodb:BatchGetItem",
+      "dynamodb:BatchWriteItem",
+      "dynamodb:DeleteItem",
+      "dynamodb:GetItem",
+      "dynamodb:PutItem",
+      "dynamodb:Query",
+      "dynamodb:Scan",
+      "dynamodb:UpdateItem"
+    ]
+    resources = [
+      aws_dynamodb_table.prod_dynamodb_table.arn
+    ]
+  }
 }
 
-
 resource "aws_iam_user" "lb" {
-  name = "discord-bot"
-  path = "/dnd-apps/"
+  name = "discord_bot"
+  path = "/dnd_apps/"
 
   tags = {
-    Project = var.project_name
+    name        = "dnd_discord_bot"
+    environment = var.environemnt
+    project     = var.project_name
   }
 }
 
@@ -22,32 +40,22 @@ resource "aws_iam_access_key" "lb" {
   user = aws_iam_user.lb.name
 }
 
-data "aws_iam_policy_document" "example" {
-  statement {
-    actions   = ["*"]
-    resources = ["*"]
-  }
-}
-
 
 resource "aws_iam_user_policy" "lb_ro" {
-  name = "test"
+  name = var.project_name
   user = aws_iam_user.lb.name
-
-  policy = data.aws_iam_policy_document.example
+  policy = data.aws_iam_policy_document.example.json
 }
 
 
-resource "aws_dynamodb_table" "basic-dynamodb-table" {
-  name           = "dnd-discord-bot"
-  billing_mode   = "PROVISIONED"
-  read_capacity  = 5
-  write_capacity = 5
+resource "aws_dynamodb_table" "prod_dynamodb_table" {
+  name           = "${var.aws_dynamodb_table}_${var.environemnt}"
+  billing_mode   = "PAY_PER_REQUEST"
   hash_key       = "unique_id"
   range_key      = "name"
 
   attribute {
-    name = "unique_id"
+    name = "id"
     type = "S"
   }
 
@@ -57,18 +65,26 @@ resource "aws_dynamodb_table" "basic-dynamodb-table" {
   }
 
   tags = {
-    Name        = "dnd-discord-bot"
-    Environment = "production"
-    Project = var.project_name
+    name        = "dnd_discord_bot"
+    environment = var.environemnt
+    project     = var.project_name
   }
 }
 
-resource "heroku_deployment" "default" {
-  name   = "my-cool-app"
+resource "heroku_app" "dnd_discord_bot" {
+  name   = var.project_name
   region = "us"
 
   config_vars = {
-    FOOBAR = "baz"
+    RACK_ENV = var.environemnt
+    AWS_REGION = "us-west-2"
+  }
+
+  sensitive_config_vars = {
+    AWS_ACCESS_KEY_ID = aws_iam_access_key.lb.id
+    AWS_SECRET_ACCESS_KEY = aws_iam_access_key.lb.secret
+    GOOGLE_ANALYTICS_SITE_ID = var.google_analytics_site_id
+    DISCORD_BOT_TOKEN = var.discord_bot_token
   }
 
   buildpacks = [

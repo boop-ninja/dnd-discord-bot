@@ -15,8 +15,8 @@ module R4RBot
         'lookup'
       end
 
-      def lookup_json_file_name(opt)
-        found_key, *_found_values = {
+      def categories
+        {
           "armor": %w[armor a],
           "backgrounds": %w[background backgrounds b],
           "classes": %w[classes class c],
@@ -30,7 +30,11 @@ module R4RBot
           "sections": %w[sections section sec se],
           "spells": %w[spells spell s],
           "weapons": %w[weapons weapon weap w]
-        }.find do |_key, values|
+        }
+      end
+
+      def lookup_json_file_name(opt)
+        found_key, *_found_values = categories.find do |_key, values|
           values.include?(opt.to_s.downcase)
         end
         found_key
@@ -44,9 +48,26 @@ module R4RBot
       end
 
       def load_data(category = 'weapons')
-        joined_path = File.join(data_folder, "./#{category.to_s}.json")
+        joined_path = File.join(data_folder, "./#{category}.json")
         json_path = File.expand_path(joined_path)
         JSON.parse(File.read(json_path))
+      end
+
+      def send_help(event)
+        event.channel.send_embed('') do |embed|
+          embed.title = "#{self.class.keyword.capitalize} Command"
+          embed.description = 'A continent way for you to look up stuff from the SRD.'
+          embed.colour = random_hex_color
+          embed.add_field(name: 'Usage', value: '!lookup [category] [name of thing]')
+          embed.add_field(
+            name: 'Categories',
+            value: categories.keys.join(', ')
+          )
+          embed.add_field(
+            name: 'Example',
+            value: '!lookup spell acid arrow'
+          )
+        end
       end
 
       # @param [Discordrb::Events::MessageEventHandler] event
@@ -60,7 +81,7 @@ module R4RBot
         selected_category = lookup_json_file_name(category)
 
         if selected_category.to_s == 'classes'
-          return event.respond "Sorry!! Unfortunately searching for `#{selected_category.to_s}` is not yet supported..."
+          return event.respond "Sorry!! Unfortunately searching for `#{selected_category}` is not yet supported..."
         end
 
         data_file = R4RBot::Utils::SRD.new logger: logger, name: selected_category

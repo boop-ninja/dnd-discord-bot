@@ -11,6 +11,15 @@ module R4RBot
         'snuggle'
       end
 
+      def send_help(event)
+        event.channel.send_embed('') do |embed|
+          embed.title = "#{self.class.keyword.capitalize} Command"
+          embed.description = 'I help u express emotion UwU'
+          embed.colour = random_hex_color
+          embed.add_field(name: 'Usage', value: '!snuggle [user]')
+        end
+      end
+
       # @param [Discordrb::Events::MessageEventHandler] event
       def fulfill(event)
         user_ids = parse_user_ids(event.message.content)

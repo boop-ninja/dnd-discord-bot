@@ -25,6 +25,21 @@ module R4RBot
         }
       end
 
+      def send_help(event)
+        event.channel.send_embed('') do |embed|
+          embed.title = "#{self.class.keyword.capitalize} Command"
+          embed.description = 'Rolls like a boss!'
+          embed.colour = random_hex_color
+          embed.add_field(name: 'Usage', value: '!roll [count]d[die size]')
+          embed.add_field(
+            name: 'Advanced Usage',
+            value: '!roll [count]d[die size][modifier] [note]'
+          )
+          embed.add_field(name: 'Example', value: '!roll 1d6')
+          embed.add_field(name: 'Advanced Example', value: '!roll 1d20+2 My Initiative')
+        end
+      end
+
       # @param [Discordrb::Events::MessageEventHandler] event
       def fulfill(event)
         log_msg = format(
