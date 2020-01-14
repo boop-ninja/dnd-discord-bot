@@ -1,6 +1,6 @@
 variable "project_name" {
   type = string
-  default = "dnd_apps_discord_bot"
+  default = "dnd-apps-discord-bot"
 }
 
 variable "environemnt" {
