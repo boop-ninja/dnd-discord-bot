@@ -1,5 +1,9 @@
 .env*
-
+*.note
+*.tfvars*
+.terraform
+*.tfstate
+data/wotc_5e_srd_output.json
 
 # Created by https://www.gitignore.io/api/ruby,rubymine+all,jetbrains+all,visualstudiocode
 # Edit at https://www.gitignore.io/?templates=ruby,rubymine+all,jetbrains+all,visualstudiocode
@@ -208,3 +212,7 @@ build-iPhoneSimulator/
 .history
 
 # End of https://www.gitignore.io/api/ruby,rubymine+all,jetbrains+all,visualstudiocode
+/terraform/terraform.tfvars.json
+!/data/wotc_5e_srd_output.json
+
+data/wotc_5e_srd_output.json

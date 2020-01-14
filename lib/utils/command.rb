@@ -23,7 +23,13 @@ module R4RBot
         @logger = @environment.logger
       end
 
+      def fulfill(event)
+        event.respond 'Im feel fulfilled! :D'
+      end
 
+      def send_help(event)
+        event.respond 'You have been helped <3'
+      end
 
       def respond_with_embedded_error(event, message)
         event.channel.send_embed('') do |embed|
@@ -36,8 +42,9 @@ module R4RBot
       end
 
       def handle_event(event)
-        # /^!\w+\shelp$/i.match?(event.message.content)
-        fulfill(event)
+        help_regex = self.class.escape_string("!#{self.class.keyword} help")
+        needs_help = help_regex.match?(event.content)
+        needs_help ? send_help(event) : fulfill(event)
       rescue R4RBot::Errors::InvalidMessageArguments => e
         logger.error e.message
         respond_with_embedded_error event, e.message
@@ -51,11 +58,14 @@ module R4RBot
           ObjectSpace.each_object(Class).select { |klass| klass < self }
         end
 
+        def escape_string(str)
+          Regexp.new(Regexp.escape(str), Regexp::IGNORECASE)
+        end
+
         # Default registration is just a 'start_with'
 
         def registrations
-          start_with =
-            Regexp.new(Regexp.escape("!#{keyword}"), Regexp::IGNORECASE)
+          start_with = escape_string("!#{keyword}")
           {
             start_with: start_with
           }
@@ -65,23 +75,17 @@ module R4RBot
         # @param client [Discordrb::Bot] The Discord bot instance.
         # @param bot [R4RBot::DiscordClient] The bot client
         def register(environment:, client:, bot:)
+          opts = {
+            environment: environment,
+            client: client,
+            bot: bot
+          }
           registrations.each_pair do |key, value|
             client.message(key => value) do |event|
-              new(
-                environment: environment,
-                client: client,
-                event: event,
-                bot: bot
-              ).handle_event event
+              new(opts.merge(event: event)).handle_event(event)
             end
-
             client.message_edit(key => value) do |event|
-              new(
-                environment: environment,
-                client: client,
-                event: event,
-                bot: bot
-              ).handle_event event
+              new(opts.merge(event: event)).handle_event(event)
             end
           end
         end
