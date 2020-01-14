@@ -51,16 +51,16 @@ resource "aws_iam_user_policy" "lb_ro" {
 resource "aws_dynamodb_table" "prod_dynamodb_table" {
   name           = "${var.aws_dynamodb_table}_${var.environemnt}"
   billing_mode   = "PAY_PER_REQUEST"
-  hash_key       = "unique_id"
-  range_key      = "name"
+  hash_key       = var.aws_dynamodb_hash_key
+  range_key      = var.aws_dynamodb_range_key
 
   attribute {
-    name = "id"
+    name = var.aws_dynamodb_hash_key
     type = "S"
   }
 
   attribute {
-    name = "name"
+    name = var.aws_dynamodb_range_key
     type = "S"
   }
 
