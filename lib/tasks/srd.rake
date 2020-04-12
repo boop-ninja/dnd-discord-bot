@@ -90,4 +90,4 @@ markdown = <<~EOS
   | 6  | Once I pick a goal, I become obsessed with it to the detriment of everything else in my life. |
 EOS
 
-puts sanitize(markdown)
+# puts sanitize(markdown)

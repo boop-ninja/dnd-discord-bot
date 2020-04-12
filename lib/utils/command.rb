@@ -15,12 +15,12 @@ module R4RBot
       # @param client [Discordrb::Bot] The Discord bot instance.
       # @param event [Discordrb::Event] The event which caused this command invocation.
       # @param bot [R4RBot::DiscordClient] The bot client
-      def initialize(environment:, client:, event:, bot:)
+      def initialize(environment:, client:, event:, bot:, logger:)
         @environment = environment
         @client = client
         @event = event
         @bot = bot
-        @logger = @environment.logger
+        @logger =  logger || @environment.logger
       end
 
       def fulfill(event)
@@ -78,14 +78,15 @@ module R4RBot
           opts = {
             environment: environment,
             client: client,
-            bot: bot
+            bot: bot,
+            logger: environment.logger
           }
           registrations.each_pair do |key, value|
             client.message(key => value) do |event|
-              new(opts.merge(event: event)).handle_event(event)
+              new(**opts.merge(event: event)).handle_event(event)
             end
             client.message_edit(key => value) do |event|
-              new(opts.merge(event: event)).handle_event(event)
+              new(**opts.merge(event: event)).handle_event(event)
             end
           end
         end
