@@ -2,6 +2,7 @@
 
 require 'discordrb'
 require 'optparse'
+require_relative 'version'
 require_relative 'lib/config/environment'
 require_relative 'lib/utils/command'
 
@@ -22,15 +23,10 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-
 environment = R4RBot::Environment
 client = Discordrb::Bot.new token: environment.discord_bot_token
 client_id = client.bot_application.id
 invite_url = "https://discordapp.com/oauth2/authorize?client_id=#{client_id}&scope=bot&permissions=68608"
-
-module R4RBot
-  VERSION = ENV.fetch('HEROKU_RELEASE_VERSION', '1.1.0')
-end
 
 
 R4RBot::Commands::Command.subclasses.each do |klass|

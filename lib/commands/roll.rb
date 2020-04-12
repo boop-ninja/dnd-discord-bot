@@ -3,6 +3,9 @@
 require_relative '../utils/command'
 require_relative '../utils/normalize_content'
 require_relative '../utils/quick_maths'
+require_relative '../utils/random_hex_color'
+require_relative '../utils/regexes'
+require_relative '../utils/hex_colors'
 
 module R4RBot
   module Commands
@@ -11,18 +14,12 @@ module R4RBot
         'roll'
       end
 
-      def valid_die?(die_size)
-        [4, 6, 8, 10, 12, 20].include?(die_size.to_i)
+      def dice_set_filter
+        R4RBot::Utils::Regexes::Roll::DICE_FILTER
       end
 
-      def parse_message_components(content)
-        {
-          count: content[/^\d+/],
-          die_size: content[/d(\d+)/, 1],
-          math_symbol: content[%r{([\\/\+\*])}, 1] || '+',
-          modifier: content[/\W(\d+)/, 1] || '0',
-          description: content[/\s(.*)$/, 1] || 'You made a roll!!'
-        }
+      def valid_die?(die_size)
+        [4, 6, 8, 10, 12, 20, 100].include?(die_size.to_i)
       end
 
       def send_help(event)
@@ -40,26 +37,88 @@ module R4RBot
         end
       end
 
-      # @param [Discordrb::Events::MessageEventHandler] event
-      def fulfill(event)
-        log_msg = format(
-          'Received roll request from %<username>s',
-          username: event.user.nick || event.user.username
-        )
-        logger.info(log_msg)
-        count, die_size, math_symbol, modifier, description =
-          parse_message_components(normalize_content(event.content)).values
+      def parse_dice_roll_components(content)
+        c_string = content.to_s
+        {
+          count: c_string[dice_set_filter, 1],
+          die_size: c_string[dice_set_filter, 2],
+          math_symbol: c_string[dice_set_filter, 4] || '+',
+          modifier: c_string[dice_set_filter, 5] || '0'
+        }
+      end
+
+      def parse_roll_sets_from_message(context)
+        context.to_enum(:scan, dice_set_filter)
+          .map {$&}
+          .map {|d| d.downcase.tr(' ', '')}
+          .map {|d| parse_dice_roll_components(d)}
+      end
+
+      # @param [Object] roll_data
+      def handle_dice_roll(roll_data)
+        count, die_size, math_symbol, modifier = roll_data.values
         query = [count, 'd', die_size]
         query.concat([math_symbol, modifier]) if modifier.to_i.positive?
         rolls = Array.new(count.to_i) { |_i| (1..die_size.to_i).to_a.sample }
         sum = quick_maths math_symbol, rolls.inject(:+), modifier
+        { query: query, rolls: rolls, sum: sum }
+      end
+
+      # @param [Object] event
+      # @param [String] description
+      # @param [Object] roll_data
+      def respond_with_embedded_single_role(event:, description:, roll_data:)
         event.channel.send_embed('') do |embed|
-          embed.title = description.sub(/\<[\@\!]\d*\>/, 'player')
-          embed.description = 'Lets see them rolls bb!'
-          embed.colour = rolls.include?(1) ? 0xff1900 : 0x3cff00
-          embed.add_field(name: 'Query:', value: format('%<query>s', query: query.join('')))
-          embed.add_field(name: 'Rolls:', value: format('%<rolls>s', rolls: rolls.join(', ')))
-          embed.add_field(name: 'Sum:', value: format('%<sum>d', sum: sum))
+          embed.title = 'Lets see them rolls bb!'
+          embed.description = description
+          embed.colour = roll_data[:rolls].include?(1) ? R4RBot::Utils::Colors::ERROR_RED : R4RBot::Utils::Colors::SUCCESS_GREEN
+          embed.add_field(name: 'Query:', value: format('%<query>s', query: roll_data[:query].join('')))
+          embed.add_field(name: 'Rolls:', value: format('%<rolls>s', rolls: roll_data[:rolls].join(', ')))
+          embed.add_field(name: 'Sum:', value: format('%<sum>d', sum: roll_data[:sum]))
+          embed
+        end
+      end
+
+      # @param [Object] event
+      # @param [String] description
+      # @param [Object] roll_data
+      def respond_with_embedded_multi_role(event:, description:, roll_data:)
+        event.channel.send_embed('') do |embed|
+          embed.title = 'Looks like you made a couple of rolls!'
+          embed.description = description
+          embed.colour = random_hex_color
+          embed.add_field(name: 'Queries:', value: format('%<query>s', query: roll_data.map {|e| e[:query].join('')}.join(', ')))
+          roll_data.each do |roll|
+            embed.add_field(name: 'Query:', value: format('%<rolls>s', rolls: roll[:query].join('')))
+            embed.add_field(name: 'Rolls:', value: format('%<rolls>s', rolls: roll[:rolls].join(', ')), inline: true)
+            embed.add_field(name: 'Sum:', value: format('%<sum>d', sum: roll[:sum]), inline: true)
+          end
+          embed
+        end
+      end
+
+      # @param [Discordrb::Events::MessageEventHandler] event
+      def fulfill(event)
+        username = event.user.nick || event.user.username
+        logger.info format(
+                      'Received roll request from %<username>s',
+                      username: username
+                    )
+        description =  (event.content[R4RBot::Utils::Regexes::Roll::DESCRIPTION_MESSAGE, 1] || 'You made a roll!!').capitalize
+        dice_roll_data = parse_roll_sets_from_message event.content
+        dice_rolls =  dice_roll_data.map { |roll| handle_dice_roll roll }
+        if dice_rolls.length == 1
+          respond_with_embedded_single_role(
+            event: event,
+            description: description,
+            roll_data: dice_rolls[0]
+          )
+        else
+          respond_with_embedded_multi_role(
+            event: event,
+            description: description,
+            roll_data: dice_rolls
+          )
         end
       end
     end
