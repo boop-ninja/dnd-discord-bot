@@ -13,3 +13,12 @@ Rake.add_rakelib 'lib/tasks'
 
 task default: :test
 
+desc "Build the project in docker"
+task :build do
+  exec("docker build . --tag mbround18/dnd-discord-bot:latest")
+end
+
+desc "Publish to docker hub"
+task :publish do
+  exec("docker push mbround18/dnd-discord-bot:latest")
+end
