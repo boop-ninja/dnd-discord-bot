@@ -17,8 +17,6 @@ client = Discordrb::Bot.new token: environment.discord_bot_token
 client_id = client.bot_application.id
 invite_url = "https://discordapp.com/oauth2/authorize?client_id=#{client_id}&scope=bot&permissions=68608"
 
-environment.logger.info 'Hello! :)'
-
 R4RBot::Commands::Command.subclasses.each do |klass|
   klass.register environment: environment, client: client, bot: self
 end
@@ -37,7 +35,3 @@ client.ready do |event|
 end
 
 client.run
-
-
-# new line
-#

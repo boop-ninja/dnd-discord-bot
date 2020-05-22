@@ -1,0 +1,12 @@
+version: '2.0'
+services:
+  web:
+    build: .
+    env_file:
+      - ./.env
+    volumes:
+      - .:/usr/src/dnd-discord-bot
+#    links:
+#      - keydb
+#  keydb:
+#    image: eqalpha/keydb
