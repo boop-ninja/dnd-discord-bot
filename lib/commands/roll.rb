@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../utils/command'
+require_relative '../command'
 require_relative '../utils/normalize_content'
 require_relative '../utils/quick_maths'
 require_relative '../utils/random_hex_color'
@@ -29,11 +29,16 @@ module R4RBot
           embed.colour = random_hex_color
           embed.add_field(name: 'Usage', value: '!roll [count]d[die size]')
           embed.add_field(
-            name: 'Advanced Usage',
+            name: 'Advanced Usage I',
             value: '!roll [count]d[die size][modifier] [note]'
           )
+          embed.add_field(
+            name: 'Advanced Usage II',
+            value: '!roll [count]d[die size][modifier],[count]d[die size][modifier] [note]'
+          )
           embed.add_field(name: 'Example', value: '!roll 1d6')
-          embed.add_field(name: 'Advanced Example', value: '!roll 1d20+2 My Initiative')
+          embed.add_field(name: 'Advanced Example I', value: '!roll 1d20+2 My Initiative')
+          embed.add_field(name: 'Advanced Example II', value: '!roll 4d6,4d6,4d6,4d6,4d6,4d6')
         end
       end
 

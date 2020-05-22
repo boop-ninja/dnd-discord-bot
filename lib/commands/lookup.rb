@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'json'
-require_relative '../utils/command'
+require_relative '../command'
 require_relative '../utils/normalize_content'
 require_relative '../utils/quick_maths'
 require_relative '../utils/random_hex_color'

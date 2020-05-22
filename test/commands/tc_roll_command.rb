@@ -24,7 +24,7 @@ module R4RBot
         )
       end
 
-      mock_command_data = JSON.parse(File.read(File.join(File.dirname(__FILE__), './data/roll_mock_queries.json')))
+      mock_command_data = JSON.parse(File.read(File.join(File.dirname(__FILE__), '../data/roll_mock_queries.json')))
       mock_command_data.each do |query|
         define_method :"test_mock_execute_#{query}" do
           content = "!roll #{query}"

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require 'logger'
-require_relative 'parse_user_ids'
-require_relative '../errors/invalid_message_args'
+require_relative 'utils/parse_user_ids'
+require_relative 'errors/invalid_message_args'
 
 module R4RBot
   module Commands
@@ -20,7 +20,7 @@ module R4RBot
         @client = client
         @event = event
         @bot = bot
-        @logger =  logger || @environment.logger
+        @logger = logger || @environment.logger
       end
 
       def fulfill(event)

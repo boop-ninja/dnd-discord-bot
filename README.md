@@ -15,8 +15,15 @@
 
 ### Roll
 
+### Simple
+
 ```
 !roll 1d6+2
+```
+
+### Advanced
+```
+!roll 4d6,4d6,4d6,4d6,4d6
 ```
 
 ### Lookup

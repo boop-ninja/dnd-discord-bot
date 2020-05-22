@@ -2,6 +2,7 @@
 
 source 'https://rubygems.org'
 
+gem 'redis'
 gem 'aws-sdk-core'
 gem 'aws-sdk-dynamodb'
 gem 'discordrb'
@@ -12,6 +13,7 @@ gem 'minitest'
 gem 'rack'
 gem 'staccato'
 gem 'tzinfo-data'
+gem 'fuzzy_match'
 
 group :development, :test do
   gem 'kramdown-asciidoc'

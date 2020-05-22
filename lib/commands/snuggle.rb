@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../utils/command'
+require_relative '../command'
 require_relative '../utils/format_user_id'
 require_relative '../utils/random_hex_color'
 

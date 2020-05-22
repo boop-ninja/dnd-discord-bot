@@ -2,6 +2,7 @@ require 'dotenv/load'
 require 'logger'
 require 'staccato'
 require 'aws-sdk-dynamodb'
+require 'redis'
 
 module R4RBot
   class Environment
@@ -22,16 +23,12 @@ module R4RBot
       ENV.fetch('DISCORD_BOT_TOKEN')
     end
 
-    def self.google_analytics_site_id
-      ENV.fetch('GOOGLE_ANALYTICS_SITE_ID')
-    end
-
     def self.logger
-      @logger ||= Logger.new(STDOUT)
+      @logger ||= Logger.new(STDERR)
     end
 
-    def self.tracker
-      @tracker ||= Staccato.tracker(google_analytics_site_id)
+    def redis
+      @redis ||= Redis.new
     end
 
   end

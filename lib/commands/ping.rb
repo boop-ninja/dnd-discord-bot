@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../utils/command'
+require_relative '../command'
 
 module R4RBot
   module Commands
