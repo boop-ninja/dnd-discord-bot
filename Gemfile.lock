@@ -66,7 +66,7 @@ GEM
     null-logger (0.1.7)
     opus-ruby (1.0.1)
       ffi
-    rack (2.2.2)
+    rack (2.2.3)
     rake (13.0.1)
     rb-fsevent (0.10.4)
     rb-inotify (0.10.1)
@@ -96,6 +96,7 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.7)
+    unf_ext (0.0.7.7-x64-mingw32)
     websocket (1.2.8)
     websocket-client-simple (0.3.0)
       event_emitter
